@@ -135,3 +135,33 @@ This shows us that the fields returned are:
 | bat_info_maxtchr | ???         | 0             |
 | bat_info_vbus    | ???         | 5024          |
 | bat_info_aicr    | ???         | 500           |
+
+## Using PHP as a scripting language
+
+Yeah, I'm trashy like this.
+
+```bash
+    apt-get -yq install --no-install-recommends \
+        php7.3-bcmath \
+        php7.3-bz2 \
+        php7.3-cli \
+        php7.3-curl \
+        php7.3-gd \
+        php7.3-imap \
+        php7.3-intl \
+        php7.3-json \
+        php7.3-ldap \
+        php7.3-mbstring \
+        php7.3-memcache \
+        php7.3-memcached \
+        php7.3-mongodb \
+        php7.3-mysql \
+        php7.3-opcache \
+        php7.3-pgsql \
+        php7.3-pspell \
+        php7.3-redis \
+        php7.3-soap \
+        php7.3-sqlite \
+        php7.3-xml \
+        php7.3-zip
+```
