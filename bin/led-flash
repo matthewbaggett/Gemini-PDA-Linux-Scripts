@@ -1,0 +1,8 @@
+#!/bin/bash
+
+while true; do
+	echo 6 3 0 3 > /proc/aw9120_operation
+	sleep 0.05
+	echo 6 0 0 0 > /proc/aw9120_operation
+	sleep 0.05
+done
