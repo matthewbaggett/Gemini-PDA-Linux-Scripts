@@ -108,3 +108,30 @@ apt-get update -qq
 apt install -y docker-ce docker-compose aufs-dev
 ```
 
+## Decyphering Battery State
+
+Cryptically, battery state seems to be a pain in the ass to obtain on the MTK6769 - A proc device called `/proc/battery_status` is provided which returns an unlabeled CSV of data.
+
+Digging through kernel-3.18, [mtk_cooler_bcct.c](https://github.com/gemian/gemini-linux-kernel-3.18/blob/master/drivers/misc/mediatek/thermal/common/coolers/mtk_cooler_bcct.c#L1023):
+
+ * proc_create("battery_status") 
+ * stuct _cl_battery_status_fops
+ * _cl_battery_status_open
+ * _cl_battery_status_read
+ 
+```bash
+matthew@pocket:~$ cat /proc/battery_status 
+100,100,4404,2,0,0,5024,500
+```
+This shows us that the fields returned are:
+
+| internal name    | Explanation | Example Value |
+| ---------------- |:----------- | -------------:|
+| bat_info_soc     | ???         | 100           |
+| bat_info_uisoc   | ???         | 100           |
+| bat_info_vbat    | ???         | 4404          |
+| bat_info_ibat    | ???         | 2             |
+| bat_info_mintchr | ???         | 0             |
+| bat_info_maxtchr | ???         | 0             |
+| bat_info_vbus    | ???         | 5024          |
+| bat_info_aicr    | ???         | 500           |
