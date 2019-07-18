@@ -1,6 +1,36 @@
 Matt's Gemini Documentation
 ===========================
 
+# Generally useful packages
+
+I don't know how people quite live without these:
+
+```bash
+apt-get update -qq
+apt-get -y install \
+    aptitude \
+    openssh-server \
+    avahi-daemon \
+    curl \
+    wget \
+    htop \
+    iproute2 \
+    systemd-sysv \
+    locales \
+    iputils-ping
+
+sudo systemctl daemon-reload
+sudo systemctl unmask avahi-daemon
+sudo systemctl enable avahi-daemon
+```
+
+And then do a complete upgrade of all the things.
+
+```bash
+apt-get -y upgrade
+```
+
+
 # Configuring WPA Supplicant for automatic wifi connections
 
 It would be quite nice if the device would automatically connect to wifi...
@@ -65,5 +95,16 @@ If we want things to run in the background, we need it to run with the lid close
 ```bash
 sed -i 's|#HandleLidSwitch=.*|HandleLidSwitch=ignore|g' /etc/systemd/logind.conf 
 systemctl restart systemd-logind
+```
+
+# Installing Docker
+
+```bash
+apt-get update -qq
+apt install -y apt-transport-https ca-certificates curl
+curl -fsSL "https://download.docker.com/linux/debian/gpg" | apt-key add -qq - >/dev/null
+echo "deb [arch=arm64] https://download.docker.com/linux/debian stretch stable" > /etc/apt/sources.list.d/docker.list
+apt-get update -qq
+apt install -y docker-ce docker-compose aufs-dev
 ```
 
