@@ -13,8 +13,10 @@ systemctl stop wpa_supplicant.service
 systemctl disable wpa_supplicant.service
 
 # Configure WPA supplicant
-curl -K <path> -o /etc/wpa_supplicant/wpa_supplicant.conf
+curl -K https://raw.githubusercontent.com/matthewbaggett/Gemini-PDA-Linux-Scripts/master/wpa_supplicant.conf -o /etc/wpa_supplicant/wpa_supplicant.conf
 ```
+
+Don't forget to modify `/etc/wpa_supplicant/wpa_supplicant.conf` to configure your various wifi access points!
 
 # Controlling the lid LEDs
 ```bash
