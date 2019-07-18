@@ -1,7 +1,7 @@
 Matt's Gemini Documentation
 ===========================
 
-# Generally useful packages
+## Generally useful packages
 
 I don't know how people quite live without these:
 
@@ -31,7 +31,7 @@ apt-get -y upgrade
 ```
 
 
-# Configuring WPA Supplicant for automatic wifi connections
+## Configuring WPA Supplicant for automatic wifi connections
 
 It would be quite nice if the device would automatically connect to wifi...
 ```bash
@@ -48,7 +48,7 @@ curl -K https://raw.githubusercontent.com/matthewbaggett/Gemini-PDA-Linux-Script
 
 Don't forget to modify `/etc/wpa_supplicant/wpa_supplicant.conf` to configure your various wifi access points!
 
-# Controlling the lid LEDs
+## Controlling the lid LEDs
 ```bash
 apt install -y gemian-leds gemian-leds-scripts
 /usr/share/gemian-leds/scripts/torch-on && sleep 1 && /usr/share/gemian-leds/scripts/torch-off
@@ -60,7 +60,7 @@ there are 7 LEDs that appear to be addressed through aw9120:
 
 Not pictured: #7, inside on keyboard.
 
-## Manually controlling Lid + Capslock LEDs:
+### Manually controlling Lid + Capslock LEDs:
 
 ```bash
 # echo LED_NUMBER RED GREEN BLUE > /proc/aw9120_operation
@@ -75,7 +75,7 @@ echo 7 0 1 > /proc/aw9120_operation # LED 7 DIM BLUE.
 
 LED 7 on the keyboard only has red and blue LEDs attached to it, so the GREEN value is omitted.
 
-## Manually controlling Power LEDs:
+### Manually controlling Power LEDs:
 
 ```bash
 # Turn on green power LED
@@ -88,7 +88,7 @@ And to turn 'em off again, echo a 0.
 
 This LED cannot be completely turned off when device is charging.
 
-# Running with the lid closed 
+## Running with the lid closed 
 
 If we want things to run in the background, we need it to run with the lid closed:
 
@@ -97,7 +97,7 @@ sed -i 's|#HandleLidSwitch=.*|HandleLidSwitch=ignore|g' /etc/systemd/logind.conf
 systemctl restart systemd-logind
 ```
 
-# Installing Docker
+## Installing Docker
 
 ```bash
 apt-get update -qq
