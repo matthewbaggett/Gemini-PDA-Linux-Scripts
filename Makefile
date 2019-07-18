@@ -11,5 +11,5 @@ clone:
 	rsync -ar --info=progress2 --exclude='.git/' ./kernel-3.18-clean/* ./kernel-3.18
 
 kernel: clean clone
-	cp kernel.config ./KERNEL_OUT/.config
+	cp aeon.config ./KERNEL_OUT/.config
 	make O=../KERNEL_OUT -C kernel-3.18 -j4
