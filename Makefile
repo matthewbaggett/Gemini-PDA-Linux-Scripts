@@ -6,10 +6,12 @@ clean:
 
 clone:
 	[ -d kernel-3.18-clean ] || git clone https://github.com/gemian/gemini-linux-kernel-3.18 kernel-3.18-clean
+
+prepare:
 	mkdir ./kernel-3.18 ./KERNEL_OUT
 	sudo mount -t tmpfs tmpfs ./kernel-3.18
 	rsync -ar --info=progress2 --exclude='.git/' ./kernel-3.18-clean/* ./kernel-3.18
 
-kernel: clean clone
+kernel: clean clone prepare
 	cp kernel.config ./KERNEL_OUT/.config
 	make O=../KERNEL_OUT -C kernel-3.18 -j4
