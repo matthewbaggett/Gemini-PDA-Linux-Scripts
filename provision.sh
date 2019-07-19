@@ -1,5 +1,6 @@
 #!/bin/bash
 GEM_DEFAULT_IP=10.15.19.82
+set -e
 echo "Checking dependencies..."
 echo -n "Checking for sshpass... ";
 if [ ! -f /usr/bin/sshpass ]; then
@@ -94,5 +95,4 @@ done
 sshpass -f .gemini_default_password.txt ssh-copy-id gemini@$GEM_DEFAULT_IP
 
 # Trigger installation of other utilities.
-scp -q startup.sh shutdown.sh .gem-config gemini@$GEM_DEFAULT_IP:~/;
-ssh -t gemini@$GEM_DEFAULT_IP "/bin/bash ~/startup.sh"
+./payload-inject.sh

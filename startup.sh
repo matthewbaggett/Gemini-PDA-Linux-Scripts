@@ -3,8 +3,9 @@
 # $ curl -sSL https://raw.githubusercontent.com/matthewbaggett/Gemini-PDA-Linux-Scripts/master/setup.sh | sh
 #
 # Or, if you've not established wifi on the device yet, you can do it over USB bridged network:
-# $ scp -q startup.sh shutdown.sh .gem-config gemini@10.15.19.82:~/; ssh -t gemini@10.15.19.82 "/bin/bash ~/startup.sh"
-# which will require you to enter the password "gemini" twice.
+# $ ./payload-inject.sh
+
+set -e
 
 if [ -f ./.gem-config ]; then
     echo "Detected .gem-config, gonna load it."
