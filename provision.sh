@@ -9,6 +9,15 @@ else
     echo "[SKIP!]"
 fi
 
+echo -n "Checking that ModemManager isn't running... ";
+if systemctl status ModemManager.service | grep "Active: inactive"; then
+    echo "[Success - its stopped!]"
+else
+    systemctl stop ModemManager.service
+    systemctl disable ModemManager.service
+    echo "[Stopped it!]"
+fi
+
 echo -n "Downloading FlashTool... ";
 if [ ! -f flashtool.tgz ]; then
     wget -q -nc -O flashtool.tgz http://support.planetcom.co.uk/download/FlashToolLinux.tgz
