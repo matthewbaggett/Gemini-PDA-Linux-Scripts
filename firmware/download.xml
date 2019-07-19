@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<flashtool-config version="2.0">
+    <general>
+        <chip-name>MT6797</chip-name>
+        <storage-type>EMMC</storage-type>
+        <download-agent>./FlashToolLinux/MTK_AllInOne_DA.bin</download-agent>
+        <scatter>./firmware/Debian.txt</scatter>
+        <authentication></authentication>
+        <certification></certification>
+        <rom-list>
+            <rom index="0" enable="true">./firmware/preloader_aeon6797_6m_n.bin</rom>
+            <rom index="2" enable="true">./firmware/recovery.img</rom>
+            <rom index="14" enable="true">./firmware/md1rom-verified.img</rom>
+            <rom index="15" enable="true">./firmware/md1dsp-verified.img</rom>
+            <rom index="16" enable="true">./firmware/md1arm7-verified.img</rom>
+            <rom index="17" enable="true">./firmware/md3rom-verified.img</rom>
+            <rom index="18" enable="true">./firmware/tinysys-scp.bin</rom>
+            <rom index="19" enable="true">./firmware/tinysys-scp.bin</rom>
+            <rom index="21" enable="true">./firmware/lk_s.bin</rom>
+            <rom index="22" enable="true">./firmware/lk_s.bin</rom>
+            <rom index="23" enable="true">./firmware/debian_boot.img</rom>
+            <rom index="24" enable="true">./firmware/logo_s.bin</rom>
+            <rom index="25" enable="true">./firmware/trustzone.bin</rom>
+            <rom index="26" enable="true">./firmware/trustzone.bin</rom>
+            <rom index="28" enable="true">./firmware/boot.img</rom>
+            <rom index="29" enable="true">./firmware/cache.img</rom>
+            <rom index="30" enable="true">./firmware/linux.img</rom>
+            <rom index="31" enable="true">./firmware/debian_boot.img</rom>
+            <rom index="32" enable="true">./firmware/debian_boot.img</rom>
+            <rom index="33" enable="true">./firmware/boot.img</rom>
+        </rom-list>
+        <connection type="BromUSB" high-speed="true" power="AutoDetect" da_log_level="Info" timeout-count="3600000" com-port="" />
+        <checksum-level>both</checksum-level>
+    </general>
+    <commands>
+        <download-only>
+            <da-download-all />
+        </download-only>
+    </commands>
+</flashtool-config>

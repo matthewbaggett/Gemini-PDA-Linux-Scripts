@@ -30,7 +30,6 @@ And then do a complete upgrade of all the things.
 apt-get -y upgrade
 ```
 
-
 ## Configuring WPA Supplicant for automatic wifi connections
 
 It would be quite nice if the device would automatically connect to wifi...

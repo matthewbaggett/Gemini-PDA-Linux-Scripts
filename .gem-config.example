@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+GEM_HOSTNAME=gemini
+GEM_USERNAME=`whoami`
+GEM_PASSWORD=ChangeMe
+GEM_WIFI_SSID=MySSID
+GEM_WIFI_KEY=MyWifiPassword

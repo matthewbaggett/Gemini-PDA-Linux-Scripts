@@ -1,4 +1,7 @@
 .idea
+.gem-config
+FlashToolLinux
+flashtool.tgz
 kernel-*-clean
 kernel-*
 KERNEL_OUT
