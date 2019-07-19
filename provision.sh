@@ -70,8 +70,6 @@ else
     echo "Can't find device - attach it now!"
 fi
 
-exit;
-
 # Flash firmware
 echo "Flashing firmware..."
 ./FlashToolLinux/flash_tool.sh -i ./firmware/download.xml -b
