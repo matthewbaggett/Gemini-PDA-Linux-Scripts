@@ -30,6 +30,9 @@ fi
 if [ -z "$GEM_WIFI_KEY" ]; then
     read -p "Wifi Secret: " GEM_WIFI_KEY
 fi
+if [ -z "$GEM_TIMEZONE" ]; then
+    read -p "Timezone (like Europe/London): " GEM_TIMEZONE
+fi
 
 # Try the default password to sudo up.
 echo "gemini" | sudo -S true > /dev/null 2>&1
@@ -54,6 +57,10 @@ fi
 # Touch /etc/fstab incase it doesn't exist - this upsets dhclient if it doesn't.
 sudo touch /etc/fstab
 
+
+# Try the default password to sudo up.
+echo "gemini" | sudo -S true > /dev/null 2>&1
+
 # Reload all the things
 echo "Reloading systemd"
 sudo systemctl daemon-reload
@@ -77,6 +84,22 @@ while ! ping -c 1 -n -w 1 8.8.8.8 &> /dev/null
 do
     echo -n "."
 done
+echo " [Done!]"
+
+# Try the default password to sudo up.
+echo "gemini" | sudo -S true > /dev/null 2>&1
+
+# Set timezone
+sudo ln -fs /usr/share/zoneinfo/$GEM_TIMEZONE /etc/localtime
+sudo dpkg-reconfigure -f noninteractive tzdata
+
+# Set Locale
+for locale in en_US en_GB nl_NL; do
+    sudo sed -i -e "s/# $locale.UTF-8 UTF-8/$locale.UTF-8 UTF-8/" /etc/locale.gen
+done
+echo 'LANG="en_GB.UTF-8"' | sudo tee /etc/default/locale
+sudo dpkg-reconfigure --frontend=noninteractive locales
+sudo update-locale LANG=en_GB.UTF-8
 
 # Alright, lets go install shit.
 echo "Okay, updating APT repos..."
@@ -97,8 +120,15 @@ sudo apt-get -yq install \
 
 sudo systemctl daemon-reload
 
+# Try the default password to sudo up.
+echo "gemini" | sudo -S true > /dev/null 2>&1
+
 # Install PHP for some scripting goodness.
 echo "Install some PHP for scripting goodness."
+sudo apt -y install lsb-release apt-transport-https ca-certificates
+sudo wget -qq -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/php7.3.list
+sudo apt-get update -qq
 sudo apt-get -yq install --no-install-recommends \
     php7.3-bcmath \
     php7.3-bz2 \
@@ -129,14 +159,9 @@ echo "PATH=$PATH:/usr/share/gemian-leds/scripts" | sudo tee /etc/profile.d/gemia
 
 # Test the lid LEDs
 echo "Testing the lid LEDs"
-/usr/share/gemian-leds/scripts/torch-on
+sudo /usr/share/gemian-leds/scripts/torch-on
 sleep 1
-/usr/share/gemian-leds/scripts/torch-off
-
-sleep 3
-torch-on
-sleep 1
-torch-off
+sudo /usr/share/gemian-leds/scripts/torch-off
 
 # Add the new user
 echo "Adding the user $GEM_USERNAME...";
@@ -148,6 +173,8 @@ fi;
 echo "Setting hostname to $GEM_HOSTNAME";
 echo -e "127.0.0.1\t$GEM_HOSTNAME" | sudo tee -a /etc/hosts
 echo -e $GEM_HOSTNAME | sudo tee /etc/hostname
+sudo invoke-rc.d hostname.sh start
+sudo invoke-rc.d networking force-reload
 
 # Avahi
 echo "Enabling avahi"
