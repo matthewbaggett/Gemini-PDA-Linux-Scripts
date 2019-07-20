@@ -92,6 +92,9 @@ do
     echo -n "."
 done
 
+# Give it a moment to unfuckle itself.
+sleep 10
+
 # Install local SSH key into gemini user
 sshpass -f .gemini_default_password.txt ssh-copy-id gemini@$GEM_DEFAULT_IP
 
