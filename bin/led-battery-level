@@ -1,0 +1,92 @@
+#!/usr/bin/php
+<?php
+
+$states = [];
+$lastStatus = null;
+$lastStatusTime = microtime(true);
+
+function clamp($min, $max, $current)
+{
+    return max($min, min($max, $current));
+}
+
+function check_battery(){
+    $status = file_get_contents("/proc/battery_status");
+
+    #global $lastStatus, $lastStatusTime;
+    #if($lastStatus == $status){
+    #    return;
+    #}
+    #echo $status."\n". $lastStatus . "\n";
+    #$delta = microtime(true) - $lastStatusTime;
+    #echo "Time since change: {$delta}\n";
+    #$lastStatus = $status;
+    #$lastStatusTime = microtime(true);
+
+    list(
+        $soc,
+        $uisoc,
+        $batteryMilliVolts,
+        $chargingCurrentMilliAmps,
+        $chargerMinTemp,
+        $chargerMaxTemp,
+        $supplyMilliVolts,
+        $supplyCurrentMilliAmps
+    ) = str_getcsv($status);
+
+    $perLevel = 100 / (5 * 3);
+
+    $levels = ceil($uisoc / $perLevel);
+
+    echo "Battery at {$uisoc}%... light up $levels levels... ";
+
+    for ($led = 1; $led <= 5; $led++) {
+        $thisLedLevel = (int)clamp(0, 3, $levels);
+        $levels = $levels - $thisLedLevel;
+
+        $ledOutputLevels[$led] = $thisLedLevel;
+    }
+
+    $color = [1, 0, 0];
+    if ($uisoc > 50) {
+        $color = [1, 1, 0];
+    }
+    if ($uisoc > 80) {
+        $color = [0, 1, 0];
+    }
+    if ($uisoc > 98) {
+        $color = [0, 0, 1];
+    }
+
+    foreach ($ledOutputLevels as $led => $level) {
+        update_state($led, $level * $color[0], $level * $color[1], $level * $color[2]);
+    }
+
+    echo "Supplied Current: {$supplyCurrentMilliAmps}mA ... ";
+    echo "Charging Current: {$chargingCurrentMilliAmps}mA ...";
+
+    if($chargingCurrentMilliAmps > 350){
+        update_state(6,1,0,1);
+    }elseif($chargingCurrentMilliAmps <= 300 && $chargingCurrentMilliAmps > 10){
+        update_state(6,0,0,1);
+    }elseif($chargingCurrentMilliAmps <= 10){
+        update_state(6,1,0,0);
+    }
+
+    echo "\n";
+}
+
+function update_state($led, $red, $green, $blue){
+    global $states;
+    $newState = implode(" ", [$led, $red, $green, $blue]);
+    if(!isset($states[$led]) || $states[$led] != $newState) {
+        file_put_contents("/proc/aw9120_operation", $newState);
+        $states[$led] = $newState;
+    }
+}
+while(true){
+    check_battery();
+    // battery_status is only updated once every 10 seconds.
+    sleep(10);
+    //usleep(500000);
+}
