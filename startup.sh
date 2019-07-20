@@ -54,12 +54,15 @@ if [ ! -f /etc/wpa_supplicant/wpa_supplicant-wlan0.conf ]; then
     sudo ln -s /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
 fi
 
-# Touch /etc/fstab incase it doesn't exist - this upsets dhclient if it doesn't.
-sudo touch /etc/fstab
+# Configure wlan0 interface
+echo -e "allow-hotplug wlan0\niface wlan0 inet dhcp\n\twpa-conf /etc/wpa_supplicant/wpa_supplicant.conf" | sudo tee /etc/network/interfaces.d/wlan0
 
 
 # Try the default password to sudo up.
 echo "gemini" | sudo -S true > /dev/null 2>&1
+
+# Touch /etc/fstab incase it doesn't exist - this upsets dhclient if it doesn't.
+sudo touch /etc/fstab
 
 # Reload all the things
 echo "Reloading systemd"
@@ -83,6 +86,7 @@ echo -n "Waiting for internet to come up...";
 while ! ping -c 1 -n -w 1 8.8.8.8 &> /dev/null
 do
     echo -n "."
+    sleep 1;
 done
 echo " [Done!]"
 
@@ -105,7 +109,7 @@ sudo update-locale LANG=en_GB.UTF-8
 echo "Okay, updating APT repos..."
 sudo apt-get update -qq
 echo "Installing some default tooling that should have shipped with this thing..."
-sudo apt-get -yq install \
+sudo apt-get -yqq install \
     gemian-leds gemian-leds-scripts \
     aptitude \
     openssh-server \
@@ -129,7 +133,7 @@ sudo apt -y install lsb-release apt-transport-https ca-certificates
 sudo wget -qq -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
 echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/php7.3.list
 sudo apt-get update -qq
-sudo apt-get -yq install --no-install-recommends \
+sudo apt-get -yqq install --no-install-recommends \
     php7.3-bcmath \
     php7.3-bz2 \
     php7.3-cli \
@@ -163,6 +167,15 @@ sudo /usr/share/gemian-leds/scripts/torch-on
 sleep 1
 sudo /usr/share/gemian-leds/scripts/torch-off
 
+# Update the system
+sudo apt-get -yq purge libreoffice*
+sudo apt-get -y -o Dpkg::Options::="--force-overwrite" -f install
+
+sudo apt-get -y purge connman
+sudo apt -y --fix-broken install
+sudo apt-get -y purge libreoffice-base libreoffice
+sudo apt-get -y upgrade
+
 # Add the new user
 echo "Adding the user $GEM_USERNAME...";
 if [ ! -d  /home/$GEM_USERNAME ]; then
@@ -180,3 +193,7 @@ sudo invoke-rc.d networking force-reload
 echo "Enabling avahi"
 sudo systemctl unmask avahi-daemon
 sudo systemctl enable avahi-daemon
+
+# Set up lid lighting
+crontab -l | grep -q 'led-battery-level'  && echo 'Skipping adding led-battery-level crontab; Already exists' || ((crontab -l 2>/dev/null; echo "@reboot /home/gemini/bin/led-battery-level") | crontab -)
+
