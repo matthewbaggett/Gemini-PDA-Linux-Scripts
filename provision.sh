@@ -72,10 +72,11 @@ else
     echo "[SKIP!]";
 fi
 
+echo "Trying to find the device..."
 # Check for device connected and reboot it if we can
 if  ping -c 1 $GEM_DEFAULT_IP &> /dev/null; then
     echo "Device is up - rebooting...";
-    ssh -t gemini@$GEM_DEFAULT_IP "/bin/bash ~/shutdown.sh"
+    ssh -t gemini@$GEM_DEFAULT_IP "/bin/bash ~/shutdown.sh && exit"
 else
     echo "Can't find device - attach it now!"
 fi
@@ -96,3 +97,4 @@ sshpass -f .gemini_default_password.txt ssh-copy-id gemini@$GEM_DEFAULT_IP
 
 # Trigger installation of other utilities.
 ./payload-inject.sh
+

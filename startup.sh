@@ -81,6 +81,9 @@ echo "Disabling the lid from sleeping the system.."
 sudo sed -i 's|#HandleLidSwitch=.*|HandleLidSwitch=ignore|g' /etc/systemd/logind.conf
 sudo systemctl restart systemd-logind
 
+# Force DHCP update
+sudo dhclient wlan0 -v
+
 # Wait for internet to come up
 echo -n "Waiting for internet to come up...";
 while ! ping -c 1 -n -w 1 8.8.8.8 &> /dev/null
@@ -167,13 +170,16 @@ sudo /usr/share/gemian-leds/scripts/torch-on
 sleep 1
 sudo /usr/share/gemian-leds/scripts/torch-off
 
-# Update the system
+# Neuter libreoffice
+sudo dpkg-divert --remove /usr/lib/libreoffice/share/basic/dialog.xlc
+sudo dpkg-divert --remove /usr/lib/libreoffice/share/basic/script.xlc
 sudo apt-get -yq purge libreoffice*
-sudo apt-get -y -o Dpkg::Options::="--force-overwrite" -f install
 
-sudo apt-get -y purge connman
-sudo apt -y --fix-broken install
-sudo apt-get -y purge libreoffice-base libreoffice
+# Obliterate Connman
+sudo apt-get -yq purge connman
+sudo dhclient wlan0 -v
+
+# Update the system
 sudo apt-get -y upgrade
 
 # Add the new user
