@@ -215,7 +215,12 @@ sudo apt-get -y upgrade
 # Add the new user
 echo "Adding the user $GEM_USERNAME...";
 if [ ! -d  /home/$GEM_USERNAME ]; then
-    sudo useradd $GEM_USERNAME -m -p $(openssl passwd -1 $GEM_PASSWORD)
+    sudo useradd \
+        $GEM_USERNAME \
+        -m \
+        -s /bin/bash \
+        -u 100001 \
+        -p $(openssl passwd -1 $GEM_PASSWORD)
 fi;
 
 # Alter the hostname
