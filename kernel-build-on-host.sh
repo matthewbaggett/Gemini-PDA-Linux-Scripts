@@ -1,4 +1,8 @@
 #!/bin/bash
+KERNEL_REPO=https://github.com/gemian/gemini-linux-kernel-3.18
+#KERNEL_COMMIT=bf7daa4
+KERNEL_COMMIT=9ee4f5b
+
 echo "Checking for build dependencies..."
 if [ ! -f /usr/bin/make ] || [ ! -f /usr/bin/gcc ] || [ ! -f /usr/bin/ncurses5-config ] || [ ! -f /usr/bin/bc ] || [ ! -f /usr/bin/rsync ]; then
     echo "Gotta install some thangs"
@@ -13,12 +17,6 @@ else
     echo "Everything appears to be present..."
 fi
 
-# If a clean copy of 3.18 isn't present, get it
-if [ ! -d kernel/clean ]; then
-    git clone https://github.com/gemian/gemini-linux-kernel-3.18 kernel/clean
-    git -C kernel/clean reset --hard bf7daa4
-fi
-
 # Get the compiler from github
 if [[ ! -d kernel/aarch64-linux-android-4.9 ]]; then
     git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 kernel/aarch64-linux-android-4.9 -b nougat-release --depth 1
@@ -27,6 +25,20 @@ fi
 # Get MkBootImage
 if [[ ! -d kernel/mkbootimg ]]; then
     git clone https://github.com/osm0sis/mkbootimg.git kernel/mkbootimg
+fi
+
+# If a clean copy of 3.18 isn't present, get it
+if [ ! -d kernel/clean ]; then
+    git clone $KERNEL_REPO kernel/clean
+fi
+
+if [ -n $KERNEL_COMMIT ]; then
+    if [ $(git rev-parse --short HEAD) != $KERNEL_COMMIT ]; then
+        git -C kernel/clean fetch
+        git -C kernel/clean reset --hard $KERNEL_COMMIT
+    fi
+else
+    git -C kernel/clean pull
 fi
 
 # Delete any previous copies
