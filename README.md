@@ -1,6 +1,58 @@
 Matt's Gemini Documentation
 ===========================
 
+## Using the automated provisioning:
+
+### Provision a device: provision.sh
+
+Provision a device, from blank/bricked:
+
+This will:
+ * Download the FlashTool
+ * Download the Debian images
+ * Download the Base images required 
+ * Flash Debian
+ * Reboot the device
+ * Wait for networking between the Gemini and your laptop to come up.
+ * Run `startup.sh` on your gemini
+ 
+```bash
+./provision.sh
+```
+
+### First time startup: startup.sh
+
+This will:
+ * Connect to the Gemini and insert our ssh-keys.
+ * Configure Wifi with wpa_supplicant
+ * Prevent closing the lid from suspending the device so that we can run things while in a pocket
+ * Set the Timezone
+ * Set the Locale
+ * Install some sensible base packages
+ * Install PHP7.3 for scriptyness.
+ * Install some gemini-leds related gubs
+ * Purge libreoffice
+ * Purge Connman
+ * System update
+ * Create a new non-gemian user
+ * Make them sudoer
+ * Copy over our ssh-keys into that new user
+ * Set the Gemini Hostname
+ * Enable avahi
+ 
+```bash
+./run-remote-script.sh startup.sh
+```
+ 
+### Compile a kernel: kernel.sh
+
+ * Pull the awful old 3.18 kernel from github, if not already present
+ * Duplicate it, ommitting the .git directory into a tmpfs
+ 
+```bash
+./run-remote-script.sh kernel.sh
+```
+
 ## Generally useful packages
 
 I don't know how people quite live without these:

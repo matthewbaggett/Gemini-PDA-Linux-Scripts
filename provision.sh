@@ -99,5 +99,5 @@ sleep 10
 sshpass -f .gemini_default_password.txt ssh-copy-id gemini@$GEM_DEFAULT_IP
 
 # Trigger installation of other utilities.
-./payload-inject.sh
+./run-remote-script.sh startup.sh
 

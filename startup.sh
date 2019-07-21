@@ -133,6 +133,7 @@ if [ ! -f /usr/bin/aptitude ]; then
         avahi-daemon \
         curl \
         wget \
+        git \
         htop \
         iproute2 \
         systemd-sysv \
@@ -193,7 +194,7 @@ sudo /usr/share/gemian-leds/scripts/torch-off
 # Neuter libreoffice
 if [ -d /usr/lib/libreoffice ]; then
     sudo dpkg-divert --remove /usr/lib/libreoffice/share/basic/dialog.xlc
-    sudo dpkg-divert --remove /usr/lib/libreoffice/share/basic/script.xlc
+    sudo dpkg-dihvert --remove /usr/lib/libreoffice/share/basic/script.xlc
     sudo apt-get -yq purge libreoffice*
     sudo rm -Rf /usr/lib/libreoffice
 else
@@ -221,10 +222,18 @@ if [ ! -d  /home/$GEM_USERNAME ]; then
         -s /bin/bash \
         -u 100001 \
         -p $(openssl passwd -1 $GEM_PASSWORD)
+    # Make our new user a sudoer
+    sudo usermod -aG sudo $GEM_USERNAME
+    # Copy over known-keys from gemini account
+    sudo mkdir /home/$GEM_USERNAME/.ssh
+    sudo cp /home/gemini/.ssh/authorized_keys /home/$GEM_USERNAME/.ssh/authorized_keys
+    sudo chown -R $GEM_USERNAME:$GEM_USERNAME /home/$GEM_USERNAME/.ssh
+    sudo cp -R /home/gemini/bin /home/$GEM_USERNAME/bin
+    sudo chown -R $GEM_USERNAME:$GEM_USERNAME /home/$GEM_USERNAME/bin
 fi;
 
 # Alter the hostname
-if [ $GEM_HOSTNAME != $(cat /etc/hostname) ]; then
+if [ ! -f /etc/hostname ] || [ $GEM_HOSTNAME != $(cat /etc/hostname) ]; then
     echo "Setting hostname to $GEM_HOSTNAME";
     echo -e "127.0.0.1\t$GEM_HOSTNAME" | sudo tee -a /etc/hosts
     echo -e $GEM_HOSTNAME | sudo tee /etc/hostname
@@ -238,8 +247,7 @@ sudo systemctl unmask avahi-daemon
 sudo systemctl enable avahi-daemon
 
 # Set up lid lighting
+sudo chmod 777 /proc/aw9120_operation
 ((crontab -l | grep -q 'led-battery-level') && echo 'Skipping adding led-battery-level crontab; Already exists') \
     || ((crontab -l 2>/dev/null; echo "@reboot /home/gemini/bin/led-battery-level") | crontab -)
 nohup /home/gemini/bin/led-battery-level &
-
-
