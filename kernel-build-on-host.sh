@@ -1,10 +1,9 @@
 #!/bin/bash
 KERNEL_REPO=https://github.com/gemian/gemini-linux-kernel-3.18
-#KERNEL_COMMIT=bf7daa4
-KERNEL_COMMIT=9ee4f5b
+KERNEL_COMMIT=acd71031166b13fae10abd71ba6228fd965a8911
 
 echo "Checking for build dependencies..."
-if [ ! -f /usr/bin/make ] || [ ! -f /usr/bin/gcc ] || [ ! -f /usr/bin/ncurses5-config ] || [ ! -f /usr/bin/bc ] || [ ! -f /usr/bin/rsync ]; then
+if [ ! -f /usr/bin/make ] || [ ! -f /usr/bin/gcc ] || [ ! -f /usr/bin/ncurses5-config ] || [ ! -f /usr/bin/bc ] || [ ! -f /usr/bin/rsync ] || [ -f /usr/bin/debuild ] || [ -f  /usr/bin/aarch64-linux-gnu-gcc ]; then
     echo "Gotta install some thangs"
     sudo apt-get -qq update
     sudo apt-get -yqq install \
@@ -12,7 +11,9 @@ if [ ! -f /usr/bin/make ] || [ ! -f /usr/bin/gcc ] || [ ! -f /usr/bin/ncurses5-c
         gcc \
         libncurses5-dev \
         bc \
-        rsync
+        rsync \
+        devscripts \
+        gcc-aarch64-linux-gnu
 else
     echo "Everything appears to be present..."
 fi
